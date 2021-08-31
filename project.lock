@@ -1,0 +1,26 @@
+preprocess:
+  cmd: python -m spacy run preprocess
+  script:
+    - python scripts/preprocess.py assets/all_region_training.json corpus/all_region_training.spacy
+    - python scripts/preprocess.py assets/all_region_training_eval.json corpus/all_region_training_eval.spacy
+  deps:
+    - path: assets/all_region_training.json
+      md5: decebb54b494fa80907b39ab5c0c6250
+  outs:
+    - path: corpus/all_region_training.spacy
+      md5: 3f0a8701a15c4d1a0ed4252d6761b65e
+  spacy_version: 3.1.2
+  spacy_git_version: e1f88de72
+train:
+  cmd: python -m spacy run train
+  script:
+    - python -m spacy train configs/config.cfg --output training/ --paths.train corpus/all_region_training.spacy
+      --paths.dev corpus/all_region_training_eval.spacy
+  deps:
+    - path: corpus/all_region_training.spacy
+      md5: 3f0a8701a15c4d1a0ed4252d6761b65e
+  outs:
+    - path: training/model-best
+      md5: 0b2fc65e63ebdc43ef94ec39fd3d0490
+  spacy_version: 3.1.2
+  spacy_git_version: e1f88de72

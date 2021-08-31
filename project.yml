@@ -1,0 +1,47 @@
+title: "Detecting Destinations in Bookmundi using Named Entity Recognition"
+
+# Variables can be referenced across the project.yml using ${vars.var_name}
+vars:
+  config : "config.cfg"
+  name : "ner_destination"
+  version : "0.0.1"
+  train : "all_region_training"
+  dev : "all_region_training_eval"
+  patterns : "destination_patterns"
+
+# These are the directories that the project needs. The project CLI will make
+# sure that they always exist.
+directories: ["assets", "training", "configs", "scripts", "corpus", "packages"]
+
+
+# Workflows are sequences of commands (see below) executed in order. You can
+# run them via "spacy project run [workflow]". If a commands's inputs/outputs
+# haven't changed, it won't be re-run.
+# workflows:
+#   all:
+#     - preprocess
+#     - train
+#     - evaluate
+
+
+commands:
+  - name: "preprocess"
+    help: "Convert the data to spaCy's binary format"
+    script:
+      - "python scripts/preprocess.py assets/${vars.train}.json corpus/${vars.train}.spacy"
+      - "python scripts/preprocess.py assets/${vars.dev}.json corpus/${vars.dev}.spacy"
+    deps:
+      - "assets/${vars.train}.json"
+    outputs:
+      - "corpus/${vars.train}.spacy"
+  
+  - name: "train"
+    help: "Train a named entity recognition model"
+    script:
+      - "python -m spacy train configs/${vars.config} --output training/ --paths.train corpus/${vars.train}.spacy --paths.dev corpus/${vars.dev}.spacy"
+    deps:
+      - "corpus/${vars.train}.spacy"
+    outputs:
+      - "training/model-best"
+
+
