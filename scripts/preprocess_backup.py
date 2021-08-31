@@ -68,7 +68,7 @@ def main(input_path:Path, output_path:Path):
       title = clean_string(raw['title'])
       inputstring = title # + description
       if name in title:
-        temp = (inputstring,{'entities': addEntities(inputstring, name, "full")})
+        temp = (inputstring,addEntities(inputstring, name, "full"))
         training_data.append(temp)
         full_match_count = full_match_count + 1
       else:
@@ -83,7 +83,7 @@ def main(input_path:Path, output_path:Path):
         if (partial_match):
           entity = addEntities(inputstring, similar_word_in_title, "partial")
           if len(entity)>0:
-            temp = (inputstring, {'entities': entity}) # in partial case 2nd param will be from title itself
+            temp = (inputstring, entity) # in partial case 2nd param will be from title itself
             training_data.append(temp)
             partial_match_count = partial_match_count + 1
           else:
@@ -119,40 +119,23 @@ def main(input_path:Path, output_path:Path):
   # the DocBin will store the example documents
   doc_bin = DocBin()
   doc_count=0
-  for text, annot in training_data: # data in previous format
-    doc = nlp.make_doc(text) # create doc object from text
+  for text, annotations in training_data:
+    doc = nlp(text)
     ents = []
-    for start, end, label in annot["entities"]: # add character indexes
-        span = doc.char_span(start, end, label=label, alignment_mode="contract")
+    for start, end, label in annotations:
+        span = doc.char_span(start, end, label=label)
+        if doc_count<200:
+          print("SPAN: " ,span , " | START : ", start , " | END : ", end , " | LABEL: ", label)
         if span is None:
-            print("Skipping entity")
-        else:
-            ents.append(span)
-            doc_count = doc_count + 1
-    doc.ents = ents # label the text with the ents
+          continue
+        else: 
+          ents.append(span)
+          doc_count = doc_count + 1
+    doc.ents = ents
     doc_bin.add(doc)
-
-  doc_bin.to_disk("output_path") 
-
-
-  # for text, annotations in training_data:
-  #   doc = nlp(text)
-  #   ents = []
-  #   for start, end, label in annotations:
-  #       span = doc.char_span(start, end, label=label)
-  #       if doc_count<200:
-  #         print("SPAN: " ,span , " | START : ", start , " | END : ", end , " | LABEL: ", label)
-  #       if span is None:
-  #         continue
-  #       else: 
-  #         ents.append(span)
-  #         doc_count = doc_count + 1
-  #   doc.ents = ents
-  #   doc_bin.add(doc)
-  # doc_bin.to_disk(output_path)
+  doc_bin.to_disk(output_path)
   print("DOC COUNT INSIDE DOC BIN : ", doc_count)
   print(f"Processed {len(doc_bin)} | Document Location : {output_path}")
-
 
 
 if __name__=="__main__":

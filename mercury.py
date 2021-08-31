@@ -22,7 +22,7 @@ for key in jsonObject:
     # string = remove_tags(jsonObject[key])
     # string = jsonObject[key]
 
-    string = key['title'] + ' '+key['description']
+    string = key['title'] #+ ' '+key['description']
     string = re.sub(' - ', ' to ', string)
     print(key['title'])
     doc = nlp1(string)
