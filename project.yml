@@ -61,7 +61,7 @@ commands:
   - name: visualize-model
     help: Visualize the model's output interactively using Streamlit
     script:
-      - "streamlit run scripts/visualize_model.py training/model-best \"I like Adidas shoes.\""
+      - "streamlit run scripts/visualize_model.py training/model-best \"Kathmandu to Pokhara\""
     deps:
       - "scripts/visualize_model.py"
       - "training/model-best"
