@@ -1,9 +1,15 @@
+from requests import status_codes
 import web
 import json
 import re
 import requests
 import spacy
 import configparser
+from web import webapi
+
+
+from web.webapi import BadRequest
+
 
  
 urls = (
@@ -16,31 +22,32 @@ web.header( 'Content-Type',
  
  
 class DestinationRequestHandler:
-    
-    """list suggested places"""
     def POST(self, collection):
         model = self.__get_config()
         nlp = spacy.load(model)
         itinerary_object = json.loads(web.data())
         response_data = []
-        for itinerary_item in itinerary_object:
-            input_string = self.__clean_text(itinerary_item['title'])
-            doc = nlp(input_string)
-            doc.ents = set(doc.ents)
-            place=[]
-            for w in doc.ents:
-                place.append(w.text)
-            item = {
-                    # "product_id" : id,
-                    "day" : itinerary_item['day'],
-                    "input" : itinerary_item['title'], 
-                    "temp_string" : input_string,
-                    "recommended_destination" : place
-                }
-            response_data.append(item)  
-        return json.dumps(response_data)   
-        
-
+        try:
+            for itinerary_item in itinerary_object:
+                input_string = self.__clean_text(itinerary_item['title'])
+                day = itinerary_item['day']
+                doc = nlp(input_string)
+                doc.ents = set(doc.ents)
+                place=[]
+                for w in doc.ents:
+                    place.append(w.text)
+                item = {
+                        "day" : day,
+                        "input" : itinerary_item['title'], 
+                        "temp_string" : input_string,
+                        "recommended_destination" : place
+                    }
+                response_data.append(item)
+            return json.dumps(response_data)
+        except :
+            raise web.badrequest
+            # raise NotFound(404, "Sorry, the page you were looking for was not found.")
+ 
     def __get_config(self):
         config = configparser.ConfigParser()
         config.read('./configs/api_config.cfg')
@@ -57,7 +64,10 @@ class DestinationRequestHandler:
         temp_string = re.sub(r'/', '', temp_string)
         return temp_string
 
-
+    def notfound(self):
+        return web.notfound
+        return web.notfound("Sorry, the page you were looking for was not found.")
+    
     """only for test purpose"""
     # def POST(self, collection):
     #     suggestionsPlaces = []
