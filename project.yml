@@ -22,7 +22,11 @@ directories: ["assets", "training", "configs", "scripts", "corpus", "packages"]
 #     - preprocess
 #     - train
 #     - evaluate
-
+workflows:
+  all:
+    - preprocess
+    - train
+    - evaluate
 
 commands:
   - name: "preprocess"
@@ -42,6 +46,24 @@ commands:
     deps:
       - "corpus/${vars.train}.spacy"
     outputs:
+      - "training/model-best"
+
+  - name: "evaluate"
+    help: "Evaluate the model and export metrics"
+    script:
+      - "python -m spacy evaluate training/model-best corpus/${vars.dev}.spacy --output training/metrics.json"
+    deps:
+      - "corpus/${vars.dev}.spacy"
+      - "training/model-best"
+    outputs:
+      - "training/metrics.json"
+
+  - name: visualize-model
+    help: Visualize the model's output interactively using Streamlit
+    script:
+      - "streamlit run scripts/visualize_model.py training/model-best \"I like Adidas shoes.\""
+    deps:
+      - "scripts/visualize_model.py"
       - "training/model-best"
 
 

@@ -24,3 +24,18 @@ train:
       md5: 806514215b25029412efbb9da27c7fca
   spacy_version: 3.1.2
   spacy_git_version: e1f88de72
+evaluate:
+  cmd: python -m spacy run evaluate
+  script:
+    - python -m spacy evaluate training/model-best corpus/all_region_training_eval.spacy
+      --output training/metrics.json
+  deps:
+    - path: corpus/all_region_training_eval.spacy
+      md5: 2231233840d0f68064172a0845cc2013
+    - path: training/model-best
+      md5: 806514215b25029412efbb9da27c7fca
+  outs:
+    - path: training/metrics.json
+      md5: 5749fb777353dd8c7ead0ae137eddfa2
+  spacy_version: 3.1.2
+  spacy_git_version: e1f88de72
