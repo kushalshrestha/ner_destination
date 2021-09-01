@@ -45,8 +45,7 @@ class DestinationRequestHandler:
                 response_data.append(item)
             return json.dumps(response_data)
         except :
-            raise web.badrequest
-            # raise NotFound(404, "Sorry, the page you were looking for was not found.")
+            raise webapi.badrequest
  
     def __get_config(self):
         config = configparser.ConfigParser()
@@ -64,10 +63,6 @@ class DestinationRequestHandler:
         temp_string = re.sub(r'/', '', temp_string)
         return temp_string
 
-    def notfound(self):
-        return web.notfound
-        return web.notfound("Sorry, the page you were looking for was not found.")
-    
     """only for test purpose"""
     # def POST(self, collection):
     #     suggestionsPlaces = []
