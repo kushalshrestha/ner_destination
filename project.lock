@@ -8,7 +8,7 @@ preprocess:
       md5: 0507ffa66b862fa915666b453e1d7477
   outs:
     - path: corpus/all_region_training.spacy
-      md5: ee098559a1722b4e3955c2ac1c87c959
+      md5: 3f0a8701a15c4d1a0ed4252d6761b65e
   spacy_version: 3.1.2
   spacy_git_version: e1f88de72
 train:
@@ -18,10 +18,10 @@ train:
       --paths.dev corpus/all_region_training_eval.spacy
   deps:
     - path: corpus/all_region_training.spacy
-      md5: ee098559a1722b4e3955c2ac1c87c959
+      md5: 3f0a8701a15c4d1a0ed4252d6761b65e
   outs:
     - path: training/model-best
-      md5: 806514215b25029412efbb9da27c7fca
+      md5: 0b2fc65e63ebdc43ef94ec39fd3d0490
   spacy_version: 3.1.2
   spacy_git_version: e1f88de72
 evaluate:

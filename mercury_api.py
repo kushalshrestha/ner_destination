@@ -50,7 +50,6 @@ class DestinationRequestHandler:
                     start, end, label = key
                     score = entity_scores[key]
                     output_string = docs[start:end]
-                    print(output_string)
                     if(score>0):
                         place.append({"name" : output_string, "score" : score})
                 item = {
